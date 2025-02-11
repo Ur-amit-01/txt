@@ -193,7 +193,7 @@ async def account_login(bot: Client, m: Message):
 
             elif '/master.mpd' in url:
              id =  url.split("/")[-2]
-             token = os.getenv("TOKEN")  # Get the token from environment variables
+             token = os.environ.get("TOKEN", "")  # Get the token from environment varia
              url =  "https://madxapi-d0cbf6ac738c.herokuapp.com/" + id + "/master.m3u8?token={token}"
 
             name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
