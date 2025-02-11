@@ -70,6 +70,7 @@ async def main():
 
 
 #€€€€€€€¥¥$¢¢$¥¥¥$¢¢$¥¥€¥$¢$¥¥€€€€¥$$
+
 @bot.on_message(filters.private & filters.text)
 async def handle_links(bot: Client, m: Message):
     text = m.text.strip()
@@ -79,23 +80,20 @@ async def handle_links(bot: Client, m: Message):
     links = re.findall(url_pattern, text)
 
     if not links:
-        await m.reply_text("🚫 No valid link detected. Please send a proper URL.")
+        msg = await m.reply_text("🚫 No valid link detected. Please send a proper URL.")
+        await asyncio.sleep(5)
+        await msg.delete()
         return
 
     link = links[0]  # Process the first valid link found
-    await m.reply_text(f"🔗 Link detected:\n{link}")
-
-    # Ask for batch name
-    await m.reply_text("✏️ Enter your batch name:")
-    input_batch: Message = await bot.listen(m.chat.id)
-    batch_name = input_batch.text.strip()
-    await input_batch.delete()
+    msg = await m.reply_text(f"🔗 Link detected:\n{link}")
 
     # Ask for resolution
-    await m.reply_text("📺 Choose resolution:\n144, 240, 360, 480, 720, 1080")
+    res_msg = await m.reply_text("📺 Choose resolution:\n144, 240, 360, 480, 720, 1080")
     input_res: Message = await bot.listen(m.chat.id)
     resolution = input_res.text.strip()
     await input_res.delete()
+    await res_msg.delete()
 
     # Validate resolution
     res_dict = {"144": "256x144", "240": "426x240", "360": "640x360", 
@@ -103,33 +101,43 @@ async def handle_links(bot: Client, m: Message):
     res = res_dict.get(resolution, "UN")
 
     # Ask for caption
-    await m.reply_text("✏️ Enter a caption for the file:")
+    cap_msg = await m.reply_text("✏️ Enter a caption for the file:")
     input_caption: Message = await bot.listen(m.chat.id)
     caption = input_caption.text.strip()
     await input_caption.delete()
+    await cap_msg.delete()
 
     # Ask for thumbnail
-    await m.reply_text("🌄 Send thumbnail URL or type 'no' to skip:")
+    thumb_msg = await m.reply_text("🌄 Send thumbnail URL or type 'no' to skip:")
     input_thumb: Message = await bot.listen(m.chat.id)
     thumb_url = input_thumb.text.strip()
     await input_thumb.delete()
+    await thumb_msg.delete()
 
+    thumb = None
     if thumb_url.lower() != "no" and (thumb_url.startswith("http://") or thumb_url.startswith("https://")):
-        getstatusoutput(f"wget '{thumb_url}' -O 'thumb.jpg'")
+        os.system(f"wget '{thumb_url}' -O 'thumb.jpg'")
         thumb = "thumb.jpg"
-    else:
-        thumb = None
 
-    # Process the link (example using yt-dlp)
-    file_name = f"{batch_name}_{resolution}.mp4"
+    # Start processing
+    progress_msg = await m.reply_text("⏳ Downloading... Please wait.")
+
+    file_name = f"video_{resolution}.mp4"
     cmd = f'yt-dlp -f "b[height<={resolution}]" "{link}" -o "{file_name}"'
 
     try:
         os.system(cmd)
-        await bot.send_document(m.chat.id, document=file_name, caption=caption)
+        await progress_msg.edit("✅ Download complete. Uploading...")
+
+        await bot.send_document(m.chat.id, document=file_name, caption=caption, thumb=thumb)
         os.remove(file_name)
+        if thumb:
+            os.remove(thumb)
+        
+        await progress_msg.delete()
     except Exception as e:
-        await m.reply_text(f"⚠️ Download failed: {e}")
+        await progress_msg.edit(f"⚠️ Download failed: {e}")
+
 
 #€€€€€€€¥¥$¢¢$¥¥¥$¢¢$¥¥€¥$¢$¥¥€€€€¥$$
 
