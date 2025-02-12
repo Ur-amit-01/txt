@@ -3,6 +3,7 @@ import re
 import sys
 import json
 import time
+import random
 import asyncio
 import requests
 import subprocess
@@ -67,19 +68,37 @@ async def main():
             await asyncio.sleep(3600)  # Run forever, or until interrupted
     except (KeyboardInterrupt, SystemExit):
         await stop_bot()
-    
+
+# Track bot start time
+START_TIME = time.time()
+random_images = [
+    "https://envs.sh/ypf.jpg",
+    "https://envs.sh/wVy.jpg"
+]
+
 @bot.on_message(filters.command(["start"]))
 async def account_login(bot: Client, m: Message):
-    editable = await m.reply_text(
-       f"𝐇𝐞𝐥𝐥𝐨 \n\n◆〓◆ ❖ .𓄂️𝆺𝅥⃝🕷️i̟ ‌⃪‌ ᷟ𓆩〭〬🕸️M̟i̟s̟s̟i̟o̟n̟ u̟p̟s̟c̟‌ 🖤 ❖ ™ ◆〓◆\n\n❈ Welcome To Mission Upsc Leech ", reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("✜ 𝐉𝐨𝐢𝐧 𝐔𝐩𝐃𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 ✜" ,url=f"https://t.me/Missionupscoffcial") ],
-                    [
-                    InlineKeyboardButton("✜ .𓄂️𝆺𝅥⃝🕷️i̟ ‌⃪‌ ᷟ𓆩〭〬🕸️M̟i̟s̟s̟i̟o̟n̟ u̟p̟s̟c̟‌ 🖤 ✜" ,url="https://t.me/Mission_upscc") ],
-                    [
-                    InlineKeyboardButton(" Support " ,url="https://t.me/Mission_upscc") ]                               
-            ]))
+    random_image = random.choice(random_images)
+    
+    caption =  "**🎥 Welcome to Text to Video Leech Bot!!\n\nSend a txt file, and leave rest of the things on me! 😉**",
+
+    buttons = InlineKeyboardMarkup([
+        [InlineKeyboardButton("✜ Developer ✜", url="https://t.me/Axa_bachha")
+        InlineKeyboardButton("🕒 Check Uptime", callback_data="uptime")]
+    ])
+    await bot.send_photo(
+        chat_id=m.chat.id,
+        photo=random_image,
+        caption=caption,
+        reply_markup=buttons
+    )
+
+@bot.on_callback_query(filters.regex("uptime"))
+async def uptime_callback(bot: Client, query: CallbackQuery):
+    uptime_seconds = int(time.time() - START_TIME)
+    uptime_str = time.strftime("%H hours %M minutes %S seconds", time.gmtime(uptime_seconds))
+    
+    await query.answer(f"🤖 Bot Uptime: {uptime_str}", show_alert=True)
 
 
 @bot.on_message(filters.command("thamba"))
