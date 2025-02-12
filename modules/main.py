@@ -83,7 +83,7 @@ async def account_login(bot: Client, m: Message):
     caption =  "**🎥 Welcome to Text to Video Leech Bot!!\n\nSend a txt file, and leave rest of the things on me! 😉**",
 
     buttons = InlineKeyboardMarkup([
-        [InlineKeyboardButton("✜ Developer ✜", url="https://t.me/Axa_bachha")
+        [InlineKeyboardButton("✜ Developer ✜", url="https://t.me/Axa_bachha"),
         InlineKeyboardButton("🕒 Check Uptime", callback_data="uptime")]
     ])
     await bot.send_photo(
