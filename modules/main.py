@@ -101,7 +101,7 @@ async def uptime_callback(bot: Client, query: CallbackQuery):
     await query.answer(f"🤖 Bot Uptime: {uptime_str}", show_alert=True)
 
 
-@bot.on_message(filters.command("thamba"))
+@bot.on_message(filters.command("stop"))
 async def restart_handler(_, m):
     await m.reply_text("♦ ruk gaya ♦", True)
     os.execl(sys.executable, sys.executable, *sys.argv)
