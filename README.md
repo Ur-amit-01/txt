@@ -1,6 +1,6 @@
 
 
-## vars.py [vars.py](https://github.com/SudoR2spr/txt-leech-bot/blob/main/modules/vars.py)
+## vars.py
 
 * `BOT_TOKEN`  - Get Bot Token From @BotFather
 
