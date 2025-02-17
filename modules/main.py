@@ -72,8 +72,8 @@ async def main():
 # Track bot start time
 START_TIME = time.time()
 random_images = [
-    "https://envs.sh/ypf.jpg",
-    "https://envs.sh/wVy.jpg"
+    "https://envs.sh/Q_x.jpg",
+    "https://envs.sh/Q_x.jpg"
 ]
 
 @bot.on_message(filters.command(["start"]))
